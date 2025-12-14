@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beavertail Mini-mart — Order on WhatsApp</title>
+  <style>
+    :root { --card:#fff; --bg:#f6f7fb; --text:#111; --muted:#666; --border:#e6e8ef; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:5}
+    .wrap{max-width:1100px;margin:auto;padding:16px}
+    .top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .brand{display:flex;flex-direction:column}
+    h1{margin:0;font-size:18px}
+    .sub{color:var(--muted);font-size:13px;margin-top:2px}
+    .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:999px;padding:8px 12px;background:#fff}
+    input,select,textarea{font:inherit}
+    .search{min-width:260px;border:none;outline:none}
+    .badge{background:#111;color:#fff;border-radius:999px;padding:2px 8px;font-size:12px}
+    main{padding:18px 0}
+    .grid{display:grid;grid-template-columns:1.4fr .9fr;gap:16px}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+    .row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .muted{color:var(--muted);font-size:13px}
+    .products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+    @media (max-width: 900px){ .products{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media (max-width: 520px){ .products{grid-template-columns:1fr} }
+    .p{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:8px}
+    .p .name{font-weight:650}
+    .p .cat{font-size:12px;color:var(--muted)}
+    .price{font-weight:700}
+    .btn{cursor:pointer;border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 12px;font-weight:650}
+    .btn.primary{background:#25D366;border-color:#25D366;color:#fff}
+    .btn.dark{background:#111;border-color:#111;color:#fff}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .qty{display:flex;gap:6px;align-items:center}
+    .qty button{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:800;cursor:pointer}
+    .cartItem{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border)}
+    .cartItem:last-child{border-bottom:none}
+    .totals{margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+    .field{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+    .field input,.field textarea{border:1px solid var(--border);border-radius:12px;padding:10px 12px;outline:none}
+    footer{padding:18px 0;color:var(--muted);font-size:12px;text-align:center}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1>Beavertail Mini-mart</h1>
+        <div class="sub">Browse items • Add to cart • Place order on WhatsApp</div>
+      </div>
+
+      <div class="pill">
+        <span>🔎</span>
+        <input id="q" class="search" placeholder="Search items (e.g., sugar, milk)..." />
+        <span id="cartCount" class="badge">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <!-- LEFT: Products -->
+    <section class="card">
+      <div class="row">
+        <div>
+          <div style="font-weight:700">Items</div>
+          <div class="muted">Tip: edit the product list inside this file.</div>
+        </div>
+        <div class="row" style="gap:10px">
+          <select id="cat" class="btn" style="padding:10px 12px">
+            <option value="all">All categories</option>
+          </select>
+          <button id="clearCart" class="btn">Clear cart</button>
+        </div>
+      </div>
+
+      <div id="products" class="products"></div>
+    </section>
+
+    <!-- RIGHT: Cart + Checkout -->
+    <aside class="card">
+      <div class="row">
+        <div>
+          <div style="font-weight:700">Your Cart</div>
+          <div class="muted">No payment here. We confirm on WhatsApp.</div>
+        </div>
+        <button id="copyOrder" class="btn dark">Copy order text</button>
+      </div>
+
+      <div id="cart" style="margin-top:10px"></div>
+
+      <div class="totals">
+        <div class="row"><span class="muted">Total</span><span id="total" class="price">UGX 0</span></div>
+
+        <div class="field">
+          <label class="muted">Your name</label>
+          <input id="name" placeholder="e.g., Amina" />
+        </div>
+        <div class="field">
+          <label class="muted">Phone number</label>
+          <input id="phone" placeholder="e.g., 07xx xxx xxx" />
+        </div>
+        <div class="field">
+          <label class="muted">Delivery / pickup location</label>
+          <textarea id="loc" rows="3" placeholder="e.g., Kisaasi, near X supermarket / Pickup at shop"></textarea>
+        </div>
+
+        <button id="wa" class="btn primary" style="width:100%;margin-top:12px" disabled>
+          Place Order on WhatsApp
+        </button>
+        <div class="muted" style="margin-top:10px">
+          By ordering, you agree we will contact you to confirm availability and delivery costs.
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="wrap">
+  © <span id="yr"></span> Beavertail Mini-mart • Hosted on GitHub Pages
+</footer>
+
+<script>
+  // ✅ 1) SET YOUR WHATSAPP NUMBER HERE (countrycode+number, no +, no spaces)
+  const WHATSAPP_NUMBER = "256700000000";
+
+  // ✅ 2) EDIT YOUR PRODUCT LIST HERE
+  const PRODUCTS = [
+    { id:"sugar-1kg", name:"Sugar (1kg)", price: 5500, category:"Groceries" },
+    { id:"rice-1kg", name:"Rice (1kg)", price: 6500, category:"Groceries" },
+    { id:"milk-500ml", name:"Milk (500ml)", price: 2500, category:"Dairy" },
+    { id:"bread", name:"Bread", price: 3500, category:"Bakery" },
+    { id:"eggs-10", name:"Eggs (10)", price: 6500, category:"Dairy" },
+    { id:"soda", name:"Soda (500ml)", price: 2000, category:"Drinks" },
+    { id:"water", name:"Mineral Water (500ml)", price: 1000, category:"Drinks" },
+    { id:"soap", name:"Bath Soap", price: 2000, category:"Home" },
+    { id:"toilet-paper", name:"Toilet Paper (1 roll)", price: 1500, category:"Home" },
+  ];
+
+  const fmt = n => "UGX " + n.toLocaleString("en-US");
+  const $ = sel => document.querySelector(sel);
+
+  const state = {
+    q: "",
+    cat: "all",
+    cart: {} // id -> qty
+  };
+
+  function categories() {
+    const set = new Set(PRODUCTS.map(p => p.category));
+    return ["all", ...Array.from(set)];
+  }
+
+  function filteredProducts() {
+    return PRODUCTS.filter(p => {
+      const matchesQ = (p.name.toLowerCase().includes(state.q) || p.category.toLowerCase().includes(state.q));
+      const matchesCat = state.cat === "all" || p.category === state.cat;
+      return matchesQ && matchesCat;
+    });
+  }
+
+  function cartCount() {
+    return Object.values(state.cart).reduce((a,b)=>a+b,0);
+  }
+
+  function cartLines() {
+    const lines = [];
+    let total = 0;
+    for (const [id, qty] of Object.entries(state.cart)) {
+      const p = PRODUCTS.find(x => x.id === id);
+      if (!p) continue;
+      const sub = p.price * qty;
+      total += sub;
+      lines.push({name:p.name, qty, price:p.price, sub});
+    }
+    return { lines, total };
+  }
+
+  function orderText() {
+    const { lines, total } = cartLines();
+    const name = $("#name").value.trim();
+    const phone = $("#phone").value.trim();
+    const loc = $("#loc").value.trim();
+
+    const parts = [];
+    parts.push("Hello Beavertail Mini-mart 👋");
+    parts.push("I would like to place an order:");
+    parts.push("");
+
+    lines.forEach((l, i) => {
+      parts.push(`${i+1}. ${l.name} x${l.qty} = ${fmt(l.sub)}`);
+    });
+
+    parts.push("");
+    parts.push(`TOTAL: ${fmt(total)}`);
+    parts.push("");
+    if (name) parts.push(`Name: ${name}`);
+    if (phone) parts.push(`Phone: ${phone}`);
+    if (loc) parts.push(`Location: ${loc}`);
+    parts.push("");
+    parts.push("Please confirm availability + delivery cost. Thank you.");
+
+    return parts.join("\n");
+  }
+
+  function renderCats() {
+    const sel = $("#cat");
+    sel.innerHTML = "";
+    categories().forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c === "all" ? "All categories" : c;
+      sel.appendChild(opt);
+    });
+    sel.value = state.cat;
+  }
+
+  function renderProducts() {
+    const box = $("#products");
+    box.innerHTML = "";
+
+    filteredProducts().forEach(p => {
+      const qty = state.cart[p.id] || 0;
+      const el = document.createElement("div");
+      el.className = "p";
+      el.innerHTML = `
+        <div class="name">${p.name}</div>
+        <div class="cat">${p.category}</div>
+        <div class="row">
+          <div class="price">${fmt(p.price)}</div>
+          <div class="qty">
+            <button aria-label="decrease">−</button>
+            <div style="min-width:22px;text-align:center;font-weight:700">${qty}</div>
+            <button aria-label="increase">+</button>
+          </div>
+        </div>
+      `;
+      const [decBtn, incBtn] = el.querySelectorAll("button");
+      decBtn.onclick = () => { if (state.cart[p.id]) { state.cart[p.id]--; if (state.cart[p.id] <= 0) delete state.cart[p.id]; sync(); } };
+      incBtn.onclick = () => { state.cart[p.id] = (state.cart[p.id] || 0) + 1; sync(); };
+      box.appendChild(el);
+    });
+  }
+
+  function renderCart() {
+    const box = $("#cart");
+    const { lines, total } = cartLines();
+    $("#total").textContent = fmt(total);
+    $("#cartCount").textContent = cartCount();
+
+    const ready = lines.length > 0;
+    $("#wa").disabled = !ready;
+
+    if (!ready) {
+      box.innerHTML = `<div class="muted" style="padding:10px 0">Your cart is empty.</div>`;
+      return;
+    }
+
+    box.innerHTML = "";
+    lines.forEach(l => {
+      const row = document.createElement("div");
+      row.className = "cartItem";
+      row.innerHTML = `
+        <div>
+          <div style="font-weight:650">${l.name}</div>
+          <div class="muted">${fmt(l.price)} × ${l.qty}</div>
+        </div>
+        <div style="font-weight:750">${fmt(l.sub)}</div>
+      `;
+      box.appendChild(row);
+    });
+  }
+
+  function sync() {
+    renderProducts();
+    renderCart();
+  }
+
+  // Events
+  $("#q").addEventListener("input", (e)=>{ state.q = e.target.value.trim().toLowerCase(); renderProducts(); });
+  $("#cat").addEventListener("change", (e)=>{ state.cat = e.target.value; renderProducts(); });
+  $("#clearCart").onclick = ()=>{ state.cart = {}; sync(); };
+
+  $("#copyOrder").onclick = async ()=> {
+    const { lines } = cartLines();
+    if (!lines.length) return alert("Cart is empty.");
+    const txt = orderText();
+    try {
+      await navigator.clipboard.writeText(txt);
+      alert("Order text copied. You can paste it anywhere.");
+    } catch {
+      alert("Copy failed on this browser. Use WhatsApp button instead.");
+    }
+  };
+
+  $("#wa").onclick = ()=> {
+    const { lines } = cartLines();
+    if (!lines.length) return;
+    const msg = encodeURIComponent(orderText());
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+    window.open(url, "_blank");
+  };
+
+  // Init
+  $("#yr").textContent = new Date().getFullYear();
+  renderCats();
+  sync();
+</script>
+</body>
+</html>
