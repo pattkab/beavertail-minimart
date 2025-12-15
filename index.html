@@ -5,44 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Beavertail Mini-mart — Order</title>
   <style>
-    /* ===== Theme tokens (Light default) ===== */
     :root{
-      --bg: #f6f7fb;
-      --surface: #ffffff;
-      --surface-2: #f0f2f8;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: rgba(17,24,39,.12);
-      --shadow: 0 10px 22px rgba(17,24,39,.08);
-
-      --brand: #2563eb;     /* calm blue */
-      --danger: #dc2626;
-      --ok: #059669;
-
-      --radius: 16px;
+      --bg:#f6f7fb;
+      --surface:#ffffff;
+      --surface-2:#f0f2f8;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(17,24,39,.12);
+      --shadow:0 10px 22px rgba(17,24,39,.08);
+      --brand:#2563eb;
+      --danger:#dc2626;
+      --ok:#059669;
+      --radius:16px;
     }
-
-    /* Dark theme overrides */
     html[data-theme="dark"]{
-      --bg: #0b1220;
-      --surface: #0f1730;
-      --surface-2: #101a33;
-      --text: #e9eefc;
-      --muted: #a9b3d6;
-      --border: rgba(255,255,255,.14);
-      --shadow: 0 14px 34px rgba(0,0,0,.35);
-
-      --brand: #4f8cff;
-      --danger: #ff5c7a;
-      --ok: #2ee59d;
+      --bg:#0b1220;
+      --surface:#0f1730;
+      --surface-2:#101a33;
+      --text:#e9eefc;
+      --muted:#a9b3d6;
+      --border:rgba(255,255,255,.14);
+      --shadow:0 14px 34px rgba(0,0,0,.35);
+      --brand:#4f8cff;
+      --danger:#ff5c7a;
+      --ok:#2ee59d;
     }
 
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: var(--bg);
-      color: var(--text);
+      background:var(--bg);
+      color:var(--text);
       min-height:100vh;
     }
 
@@ -52,115 +46,107 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
     }
-
-    .wrap{ max-width: 1100px; margin: 0 auto; padding: 14px 16px; }
-
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 16px;}
     .brandbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
-      flex-wrap:wrap;
     }
-    .title{
-      display:flex; flex-direction:column; gap:2px;
-      min-width: 240px;
-    }
-    h1{ margin:0; font-size: 18px; letter-spacing:.2px; }
-    .subtitle{ margin:0; color:var(--muted); font-size: 12px; }
+    .title{display:flex; flex-direction:column; gap:2px; min-width: 200px;}
+    h1{margin:0; font-size:18px; letter-spacing:.2px;}
+    .subtitle{margin:0; color:var(--muted); font-size:12px;}
 
+    /* ---- Controls: NEVER WRAP (even on mobile) ---- */
     .controls{
-      display:flex; gap:10px; align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap: nowrap;          /* no wrapping */
+      white-space: nowrap;
       margin-left:auto;
+      min-width: 0;               /* allow shrinking */
     }
 
     .pill{
       display:flex; gap:8px; align-items:center;
-      background: var(--surface);
+      background:var(--surface);
       border:1px solid var(--border);
-      border-radius: 999px;
-      padding: 8px 10px;
-      box-shadow: var(--shadow);
+      border-radius:999px;
+      padding:8px 10px;
+      box-shadow:var(--shadow);
+      min-width: 0;               /* allow input to shrink */
+      flex: 1 1 auto;             /* search takes remaining space */
     }
     .pill input{
       border:none; outline:none; background:transparent; color:var(--text);
-      width: 220px; max-width: 44vw;
-      font-size: 14px;
+      width:100%;
+      min-width: 60px;
+      font-size:14px;
     }
     .pill input::placeholder{ color: color-mix(in srgb, var(--muted) 70%, transparent); }
 
     .btn{
-      border:none;
-      border-radius: 12px;
-      padding: 10px 12px;
+      border:none; border-radius:12px;
+      padding:10px 12px;
       cursor:pointer;
-      color: white;
-      font-weight: 700;
-      background: var(--brand);
-      box-shadow: 0 10px 18px color-mix(in srgb, var(--brand) 20%, transparent);
+      color:#fff;
+      font-weight:700;
+      background:var(--brand);
+      box-shadow:0 10px 18px color-mix(in srgb, var(--brand) 20%, transparent);
       transition: transform .08s ease, filter .15s ease;
       white-space:nowrap;
+      flex: 0 0 auto;
     }
     .btn:hover{ filter: brightness(1.03); }
     .btn:active{ transform: translateY(1px); }
 
-    .btn-ghost{
-      background: var(--surface);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow: var(--shadow);
-      font-weight: 700;
-    }
     .btn-danger{
       background: color-mix(in srgb, var(--danger) 14%, transparent);
       color: color-mix(in srgb, var(--danger) 85%, var(--text));
       border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
       box-shadow:none;
     }
+    .btn-ghost{
+      background: var(--surface);
+      color: var(--text);
+      border:1px solid var(--border);
+      box-shadow: var(--shadow);
+      font-weight: 800;
+    }
     .btn-ok{
       background: color-mix(in srgb, var(--ok) 14%, transparent);
       color: color-mix(in srgb, var(--ok) 85%, var(--text));
       border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
       box-shadow:none;
+      font-weight:800;
     }
 
+    /* Toggle: icon-only (☀/🌙) */
     .toggle{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: var(--surface);
+      display:inline-flex; align-items:center; justify-content:center;
+      width:44px; height:40px;
+      border-radius:12px;
+      background:var(--surface);
       border:1px solid var(--border);
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       cursor:pointer;
-      font-weight: 800;
-      color: var(--text);
       user-select:none;
-    }
-    .toggle .dot{
-      width: 36px; height: 22px;
-      border-radius: 999px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      position:relative;
+      font-size:18px;
       flex: 0 0 auto;
     }
-    .toggle .knob{
-      position:absolute; top:2px; left:2px;
-      width:18px; height:18px; border-radius: 999px;
-      background: var(--brand);
-      transition: left .18s ease;
-    }
-    html[data-theme="dark"] .toggle .knob{ left: 16px; }
+    .toggle:active{ transform: translateY(1px); }
+    .toggle span{ line-height:1; }
 
-    main{ padding: 18px 0 120px; } /* space for bottom bar */
+    main{ padding: 18px 0 120px; }
 
+    /* Items auto-fit width */
     .grid{
       display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 14px;
     }
-    @media (max-width: 640px){
-      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .pill input{ width: 150px; }
+    @media (max-width: 420px){
+      .grid{ grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+      .wrap{ padding: 12px 12px; } /* tiny screens: more room */
+      .btn{ padding: 10px 10px; }  /* keep row tight */
     }
 
     .card{
@@ -171,50 +157,40 @@
       box-shadow: var(--shadow);
       display:flex;
       flex-direction:column;
-      min-height: 260px;
+      min-height: 250px;
     }
-
     .imgbox{
-      height: 128px;
+      height: 120px;
       background: var(--surface-2);
       border-bottom: 1px solid var(--border);
-      display:flex; align-items:center; justify-content:center;
       position:relative;
+      display:flex; align-items:center; justify-content:center;
     }
-    .imgbox img{
-      width:100%; height:100%;
-      object-fit: cover;
-      display:block;
-    }
+    .imgbox img{ width:100%; height:100%; object-fit:cover; display:block; }
     .imgbox .fallback{
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
       color: color-mix(in srgb, var(--muted) 85%, transparent);
       font-weight:800;
       text-transform: uppercase;
       letter-spacing:.3px;
       font-size: 12px;
-      pointer-events:none;
-      padding:10px;
+      padding: 10px;
       text-align:center;
+      pointer-events:none;
     }
 
     .content{
       padding: 12px;
-      display:flex;
-      flex-direction:column;
+      display:flex; flex-direction:column;
       gap: 10px;
       flex:1;
+      min-width:0;
     }
-
-    .row{
-      display:flex; justify-content:space-between; align-items:flex-start;
-      gap:10px;
-    }
+    .row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
     .name{ font-weight: 800; line-height:1.15; }
     .price{ font-weight: 900; white-space:nowrap; }
-    .meta{ color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .meta{ color: var(--muted); font-size:12px; margin-top:2px; }
 
     .qty{
       display:flex; align-items:center; justify-content:space-between;
@@ -227,6 +203,9 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 6px 8px;
+      flex: 1 1 auto;
+      justify-content:space-between;
+      max-width: 150px;
     }
     .stepper button{
       width: 30px; height: 30px;
@@ -237,61 +216,36 @@
       font-size: 16px;
       cursor:pointer;
       font-weight: 900;
+      flex: 0 0 auto;
     }
     .stepper span{
       min-width: 26px;
       text-align:center;
       font-weight: 900;
       letter-spacing:.2px;
+      flex: 1 1 auto;
     }
 
     .bottom{
-      position:fixed;
-      left:0; right:0; bottom:0;
-      z-index:20;
+      position:fixed; left:0; right:0; bottom:0; z-index:20;
       background: color-mix(in srgb, var(--bg) 85%, transparent);
       backdrop-filter: blur(10px);
       border-top: 1px solid var(--border);
     }
     .bottom .wrap{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
       padding: 12px 16px;
+      flex-wrap:nowrap;
     }
+    .totals{ display:flex; flex-direction:column; gap:4px; min-width: 200px; }
+    .totals .line{ display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:13px; }
+    .totals .line strong{ color:var(--text); }
+    .totals .grand{ display:flex; justify-content:space-between; gap:12px; font-size:15px; margin-top:2px; }
+    .totals .grand strong{ font-size:16px; font-weight:1000; }
 
-    .totals{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width: 220px;
-    }
-    .totals .line{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .totals .line strong{ color: var(--text); }
-    .totals .grand{
-      display:flex; justify-content:space-between; gap:12px;
-      font-size: 15px;
-      margin-top:2px;
-    }
-    .totals .grand strong{
-      font-size: 16px;
-      font-weight: 1000;
-    }
-
-    .bottom-actions{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-
+    .bottom-actions{ display:flex; gap:10px; align-items:center; flex-wrap:nowrap; }
     .badge{
-      display:inline-flex; align-items:center; gap:6px;
+      display:inline-flex; align-items:center;
       padding: 6px 10px;
       border-radius: 999px;
       background: var(--surface);
@@ -303,7 +257,6 @@
       box-shadow: var(--shadow);
     }
 
-    /* Checkout modal */
     .modal{
       position:fixed; inset:0; z-index:50;
       background: rgba(0,0,0,.45);
@@ -362,21 +315,20 @@
     <div class="wrap brandbar">
       <div class="title">
         <h1>Beavertail Mini-mart</h1>
-        <p class="subtitle">Select items → review total → send order via WhatsApp or Email</p>
+        <p class="subtitle">Select items → Review total → Send us order via WhatsApp or Email</p>
       </div>
 
-      <div class="controls">
+      <div class="controls" aria-label="Top controls">
         <div class="pill" title="Search items">
           <span style="opacity:.7">🔎</span>
-          <input id="search" type="text" placeholder="Search items…"/>
+          <input id="search" type="text" placeholder="Search…" />
         </div>
 
-        <div class="toggle" id="themeToggle" title="Toggle light/dark mode" role="button" tabindex="0">
-          <span id="themeLabel">Light</span>
-          <span class="dot"><span class="knob"></span></span>
-        </div>
+        <button class="toggle" id="themeToggle" title="Toggle light/dark mode" aria-label="Toggle light/dark mode" type="button">
+          <span id="themeIcon">☀️</span>
+        </button>
 
-        <button class="btn btn-danger" id="clearCart">Clear cart</button>
+        <button class="btn btn-danger" id="clearCart" type="button">Clear cart</button>
       </div>
     </div>
   </header>
@@ -390,23 +342,14 @@
   <div class="bottom">
     <div class="wrap">
       <div class="totals">
-        <div class="line">
-          <span>Currency</span>
-          <strong>UGX</strong>
-        </div>
-        <div class="line">
-          <span>Subtotal</span>
-          <strong id="subtotalText">0</strong>
-        </div>
-        <div class="grand">
-          <span><strong>Total</strong></span>
-          <strong id="totalText">0</strong>
-        </div>
+        <div class="line"><span>Currency</span><strong>UGX</strong></div>
+        <div class="line"><span>Subtotal</span><strong id="subtotalText">0</strong></div>
+        <div class="grand"><span><strong>Total</strong></span><strong id="totalText">0</strong></div>
       </div>
 
       <div class="bottom-actions">
         <span class="badge" id="itemsBadge">0 items</span>
-        <button class="btn" id="nextBtn">Next →</button>
+        <button class="btn" id="nextBtn" type="button">Next →</button>
       </div>
     </div>
   </div>
@@ -417,9 +360,9 @@
         <div class="wrap" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
             <h2 id="checkoutTitle">Review your order</h2>
-            <p>Your name/number isn’t required — WhatsApp already provides that on your side.</p>
+            <p>Send us your order via WhatsApp or Email</p>
           </div>
-          <button class="btn btn-ghost" id="closeModal">Close</button>
+          <button class="btn btn-ghost" id="closeModal" type="button">Close</button>
         </div>
       </header>
 
@@ -438,27 +381,24 @@
   </div>
 
   <script>
-    // ====== CONFIG ======
     const WHATSAPP_NUMBER = "256772844881";
     const EMAIL_TO = "drxpatt@gmail.com";
 
-    // Put images inside an "images/" folder, and name them exactly like the "image" value below.
     const products = [
-      { id: "p1",  name: "Rice (5kg)",        price: 45000, unit: "bag",   image: "rice-5kg.jpg" },
-      { id: "p2",  name: "Sugar (1kg)",       price: 4500,  unit: "kg",    image: "sugar-1kg.jpg" },
-      { id: "p3",  name: "Cooking Oil (1L)",  price: 13000, unit: "bottle",image: "cooking-oil-1l.jpg" },
-      { id: "p4",  name: "Bread (Loaf)",      price: 3500,  unit: "loaf",  image: "bread-loaf.jpg" },
-      { id: "p5",  name: "Milk (500ml)",      price: 2000,  unit: "pack",  image: "milk-500ml.jpg" },
-      { id: "p6",  name: "Eggs (Tray)",       price: 12000, unit: "tray",  image: "eggs-tray.jpg" },
-      { id: "p7",  name: "Salt (1kg)",        price: 2000,  unit: "kg",    image: "salt-1kg.jpg" },
-      { id: "p8",  name: "Soap (Bar)",        price: 2500,  unit: "bar",   image: "soap-bar.jpg" },
-      { id: "p9",  name: "Toilet Paper (Roll)", price: 1500, unit: "roll", image: "toilet-paper-roll.jpg" },
-      { id: "p10", name: "Soda (500ml)",      price: 2000,  unit: "bottle",image: "soda-500ml.jpg" },
-      { id: "p11", name: "Maize Flour (2kg)", price: 7000,  unit: "bag",   image: "maize-flour-2kg.jpg" },
-      { id: "p12", name: "Beans (1kg)",       price: 5500,  unit: "kg",    image: "beans-1kg.jpg" }
+      { id: "p1",  name: "Rice (5kg)",        price: 45000, unit: "bag",    image: "rice-5kg.jpg" },
+      { id: "p2",  name: "Sugar (1kg)",       price: 4500,  unit: "kg",     image: "sugar-1kg.jpg" },
+      { id: "p3",  name: "Cooking Oil (1L)",  price: 13000, unit: "bottle", image: "cooking-oil-1l.jpg" },
+      { id: "p4",  name: "Bread (Loaf)",      price: 3500,  unit: "loaf",   image: "bread-loaf.jpg" },
+      { id: "p5",  name: "Milk (500ml)",      price: 2000,  unit: "pack",   image: "milk-500ml.jpg" },
+      { id: "p6",  name: "Eggs (Tray)",       price: 12000, unit: "tray",   image: "eggs-tray.jpg" },
+      { id: "p7",  name: "Salt (1kg)",        price: 2000,  unit: "kg",     image: "salt-1kg.jpg" },
+      { id: "p8",  name: "Soap (Bar)",        price: 2500,  unit: "bar",    image: "soap-bar.jpg" },
+      { id: "p9",  name: "Toilet Paper (Roll)", price: 1500, unit: "roll",  image: "toilet-paper-roll.jpg" },
+      { id: "p10", name: "Soda (500ml)",      price: 2000,  unit: "bottle", image: "soda-500ml.jpg" },
+      { id: "p11", name: "Maize Flour (2kg)", price: 7000,  unit: "bag",    image: "maize-flour-2kg.jpg" },
+      { id: "p12", name: "Beans (1kg)",       price: 5500,  unit: "kg",     image: "beans-1kg.jpg" }
     ];
 
-    // cart: { [productId]: qty }
     let cart = JSON.parse(localStorage.getItem("beavertail_cart") || "{}");
 
     const grid = document.getElementById("productGrid");
@@ -475,14 +415,13 @@
     const waBtn = document.getElementById("waBtn");
     const emailBtn = document.getElementById("emailBtn");
 
-    // Theme toggle
     const themeToggle = document.getElementById("themeToggle");
-    const themeLabel = document.getElementById("themeLabel");
+    const themeIcon = document.getElementById("themeIcon");
 
     function applyTheme(theme){
       document.documentElement.setAttribute("data-theme", theme);
-      themeLabel.textContent = (theme === "dark") ? "Dark" : "Light";
       localStorage.setItem("beavertail_theme", theme);
+      themeIcon.textContent = (theme === "dark") ? "🌙" : "☀️";
     }
 
     (function initTheme(){
@@ -495,17 +434,9 @@
       }
     })();
 
-    function toggleTheme(){
+    themeToggle.addEventListener("click", () => {
       const current = document.documentElement.getAttribute("data-theme") || "light";
       applyTheme(current === "dark" ? "light" : "dark");
-    }
-
-    themeToggle.addEventListener("click", toggleTheme);
-    themeToggle.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        toggleTheme();
-      }
     });
 
     function formatUGX(n){
@@ -521,11 +452,9 @@
     }
 
     function setQty(id, qty){
-      if(qty <= 0){
-        delete cart[id];
-      } else {
-        cart[id] = qty;
-      }
+      if(qty <= 0) delete cart[id];
+      else cart[id] = qty;
+
       saveCart();
       renderTotals();
       const el = document.querySelector(`[data-qty="${id}"]`);
@@ -542,8 +471,7 @@
           totalItems += q;
         }
       }
-      const total = subtotal;
-      return { subtotal, total, totalItems };
+      return { subtotal, total: subtotal, totalItems };
     }
 
     function renderTotals(){
@@ -686,7 +614,7 @@
 
       const msg = buildOrderMessage();
 
-      // Show bold on review page by converting *text* to <strong>text</strong>
+      // Bold on review page by converting *text* to <strong>text</strong>
       orderPreview.innerHTML = msg.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
 
       waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
@@ -699,7 +627,6 @@
       modal.style.display = "none";
     }
 
-    // Events
     searchInput.addEventListener("input", (e) => renderProducts(e.target.value));
 
     clearCartBtn.addEventListener("click", () => {
@@ -713,7 +640,6 @@
     closeModal.addEventListener("click", closeCheckout);
     modal.addEventListener("click", (e) => { if(e.target === modal) closeCheckout(); });
 
-    // Init
     renderProducts("");
     renderTotals();
   </script>
