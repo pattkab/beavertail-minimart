@@ -1,32 +1,56 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <!-- Disable zoom -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>BEAVERTAIL MINIMART</title>
+  <title>Beavertail Mini-Mart Order</title>
 
   <style>
     :root{
-      --bg:#f6f7fb; --surface:#fff; --surface-2:#f0f2f8;
+      --bg:#f6f7fb; --surface:#ffffff; --surface-2:#f0f2f8;
       --text:#111827; --muted:#6b7280;
-      --border:rgba(17,24,39,.12); --shadow:0 10px 22px rgba(17,24,39,.08);
-      --brand:#2563eb; --danger:#dc2626; --ok:#059669;
+      --border:rgba(17,24,39,.12);
+      --shadow:0 10px 22px rgba(17,24,39,.08);
       --radius:16px;
 
-      --barTop: linear-gradient(90deg, rgba(37,99,235,.18), rgba(5,150,105,.14));
-      --barBottom: linear-gradient(90deg, rgba(5,150,105,.14), rgba(37,99,235,.18));
-      --barBorder: rgba(37,99,235,.22);
+      --brand:#2563eb;
+      --danger:#dc2626;
+      --ok:#059669;
+
+      /* Prettier bars */
+      --barGlow: radial-gradient(900px 120px at 15% 0%, rgba(37,99,235,.22), transparent 60%),
+                 radial-gradient(700px 120px at 85% 0%, rgba(5,150,105,.20), transparent 60%);
+      --barTop: linear-gradient(90deg, rgba(37,99,235,.14), rgba(5,150,105,.10));
+      --barBottom: linear-gradient(90deg, rgba(5,150,105,.10), rgba(37,99,235,.14));
+      --barBorder: rgba(37,99,235,.20);
+
+      /* Selected card */
+      --selectedBg: rgba(5,150,105,.10);
+      --selectedBorder: rgba(5,150,105,.35);
+      --selectedShadow: 0 12px 26px rgba(5,150,105,.12);
     }
+
     html[data-theme="dark"]{
       --bg:#0b1220; --surface:#0f1730; --surface-2:#101a33;
       --text:#e9eefc; --muted:#a9b3d6;
-      --border:rgba(255,255,255,.14); --shadow:0 14px 34px rgba(0,0,0,.35);
-      --brand:#4f8cff; --danger:#ff5c7a; --ok:#2ee59d;
+      --border:rgba(255,255,255,.14);
+      --shadow:0 14px 34px rgba(0,0,0,.35);
 
-      --barTop: linear-gradient(90deg, rgba(79,140,255,.22), rgba(46,229,157,.16));
-      --barBottom: linear-gradient(90deg, rgba(46,229,157,.16), rgba(79,140,255,.22));
-      --barBorder: rgba(79,140,255,.25);
+      --brand:#4f8cff;
+      --danger:#ff5c7a;
+      --ok:#2ee59d;
+
+      --barGlow: radial-gradient(900px 140px at 15% 0%, rgba(79,140,255,.30), transparent 60%),
+                 radial-gradient(700px 140px at 85% 0%, rgba(46,229,157,.22), transparent 60%);
+      --barTop: linear-gradient(90deg, rgba(79,140,255,.16), rgba(46,229,157,.10));
+      --barBottom: linear-gradient(90deg, rgba(46,229,157,.10), rgba(79,140,255,.16));
+      --barBorder: rgba(79,140,255,.24);
+
+      --selectedBg: rgba(46,229,157,.12);
+      --selectedBorder: rgba(46,229,157,.38);
+      --selectedShadow: 0 14px 30px rgba(46,229,157,.14);
     }
 
     *{ box-sizing:border-box; }
@@ -41,34 +65,35 @@
       touch-action:manipulation;
     }
 
-    /* Shorter fixed header */
+    /* Shorter but nicer header */
     header{
       position:fixed; top:0; left:0; right:0; z-index:30;
       background:
+        var(--barGlow),
         var(--barTop),
-        color-mix(in srgb, var(--bg) 88%, transparent);
-      backdrop-filter: blur(10px);
+        color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--barBorder);
+      box-shadow: 0 10px 24px rgba(0,0,0,.06);
     }
 
-    .wrap{ max-width:1100px; margin:0 auto; padding:10px 12px; } /* reduced */
+    .wrap{ max-width:1100px; margin:0 auto; padding:10px 12px; }
 
     .brandbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
     }
-    .title{
-      display:flex; flex-direction:column; gap:0;
-      min-width: 200px;
-      flex: 1 1 240px;
-    }
     h1{ margin:0; font-size:16px; letter-spacing:.2px; line-height:1.1; }
+    .title{ display:flex; align-items:center; gap:10px; min-width: 200px; flex: 1 1 240px; }
+    .logoDot{
+      width: 10px; height: 10px; border-radius: 999px;
+      background: linear-gradient(180deg, var(--brand), var(--ok));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 16%, transparent);
+      flex:0 0 auto;
+    }
 
     .controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:flex-end;
+      display:flex; gap:10px; align-items:center; justify-content:flex-end;
       margin-left:auto;
       flex-wrap:nowrap;
       white-space:nowrap;
@@ -80,14 +105,16 @@
       width: 40px; height: 40px;
       border-radius: 12px;
       border:1px solid var(--border);
-      background:var(--surface);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
       color:var(--text);
       box-shadow: var(--shadow);
       cursor:pointer;
       display:inline-flex; align-items:center; justify-content:center;
       font-size: 18px;
       flex:0 0 auto;
+      transition: transform .08s ease, filter .15s ease;
     }
+    .iconbtn:hover{ filter: brightness(1.03); }
     .iconbtn:active{ transform: translateY(1px); }
 
     .btn{
@@ -96,9 +123,9 @@
       padding:10px 12px;
       cursor:pointer;
       color:#fff;
-      font-weight:700;
-      background:var(--brand);
-      box-shadow:0 10px 18px color-mix(in srgb, var(--brand) 20%, transparent);
+      font-weight:800;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 92%, white), var(--brand));
+      box-shadow: 0 10px 18px color-mix(in srgb, var(--brand) 22%, transparent);
       transition:transform .08s ease, filter .15s ease;
       white-space:nowrap;
       flex:0 0 auto;
@@ -111,17 +138,23 @@
       color:var(--text);
       border:1px solid var(--border);
       box-shadow:var(--shadow);
-      font-weight:700;
+      font-weight:800;
     }
     .btn-danger{
-      background: color-mix(in srgb, var(--danger) 14%, transparent);
-      color: color-mix(in srgb, var(--danger) 85%, var(--text));
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--danger) 18%, transparent),
+        color-mix(in srgb, var(--danger) 10%, transparent)
+      );
+      color: color-mix(in srgb, var(--danger) 90%, var(--text));
       border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
       box-shadow:none;
     }
     .btn-ok{
-      background: color-mix(in srgb, var(--ok) 14%, transparent);
-      color: color-mix(in srgb, var(--ok) 85%, var(--text));
+      background: linear-gradient(180deg,
+        color-mix(in srgb, var(--ok) 18%, transparent),
+        color-mix(in srgb, var(--ok) 10%, transparent)
+      );
+      color: color-mix(in srgb, var(--ok) 92%, var(--text));
       border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
       box-shadow:none;
     }
@@ -130,7 +163,7 @@
       display:inline-flex; align-items:center; gap:8px;
       padding:9px 10px;
       border-radius:12px;
-      background:var(--surface);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
       border:1px solid var(--border);
       box-shadow:var(--shadow);
       cursor:pointer;
@@ -139,7 +172,9 @@
       user-select:none;
       flex:0 0 auto;
       height:40px;
+      transition: filter .15s ease;
     }
+    .toggle:hover{ filter: brightness(1.03); }
     .toggle .dot{
       width:36px; height:22px;
       border-radius:999px;
@@ -151,13 +186,13 @@
     .toggle .knob{
       position:absolute; top:2px; left:2px;
       width:18px; height:18px; border-radius:999px;
-      background:var(--brand);
+      background: var(--brand);
       transition:left .18s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,.18);
     }
     html[data-theme="dark"] .toggle .knob{ left:16px; }
 
-    /* push content below shorter header */
-    main{ padding: 64px 0 140px; }
+    main{ padding: 66px 0 150px; }
 
     .grid{
       display:grid;
@@ -178,7 +213,17 @@
       flex-direction:column;
       min-height:270px;
       min-width:0;
+      transition: transform .10s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
     }
+    .card:hover{ transform: translateY(-1px); }
+
+    /* Selected state (qty > 0) */
+    .card.selected{
+      background: color-mix(in srgb, var(--selectedBg) 100%, var(--surface));
+      border-color: var(--selectedBorder);
+      box-shadow: var(--selectedShadow);
+    }
+    .card.selected .name{ color: color-mix(in srgb, var(--ok) 70%, var(--text)); }
 
     .imgbox{
       height:128px;
@@ -201,7 +246,7 @@
       min-width:0;
     }
     .row{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; min-width:0; }
-    .name{ font-weight:800; line-height:1.15; min-width:0; }
+    .name{ font-weight:900; line-height:1.15; min-width:0; }
     .price{ font-weight:900; white-space:nowrap; }
     .meta{ color:var(--muted); font-size:12px; margin-top:2px; }
 
@@ -228,7 +273,10 @@
       font-size:16px;
       cursor:pointer;
       font-weight:900;
+      transition: filter .15s ease, transform .08s ease;
     }
+    .stepper button:hover{ filter: brightness(1.03); }
+    .stepper button:active{ transform: translateY(1px); }
     .stepper span{
       min-width:26px;
       text-align:center;
@@ -236,15 +284,19 @@
       letter-spacing:.2px;
     }
 
+    /* Prettier footer */
     .bottom{
       position:fixed;
       left:0; right:0; bottom:0;
       z-index:20;
       background:
+        radial-gradient(900px 160px at 15% 100%, rgba(5,150,105,.18), transparent 60%),
+        radial-gradient(700px 160px at 85% 100%, rgba(37,99,235,.18), transparent 60%),
         var(--barBottom),
-        color-mix(in srgb, var(--bg) 88%, transparent);
-      backdrop-filter: blur(10px);
+        color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: blur(12px);
       border-top: 1px solid var(--barBorder);
+      box-shadow: 0 -10px 24px rgba(0,0,0,.06);
     }
     .bottom .wrap{
       display:flex;
@@ -263,13 +315,10 @@
       flex: 1 1 220px;
     }
     .totals .line{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
+      display:flex; justify-content:space-between; gap:12px;
       color:var(--muted);
       font-size:13px;
     }
-    .totals .line strong{ color:var(--text); }
     .totals .grand{
       display:flex; justify-content:space-between; gap:12px;
       font-size:15px;
@@ -291,10 +340,10 @@
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px;
       border-radius:999px;
-      background:var(--surface);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
       border:1px solid var(--border);
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
       font-size:12px;
       white-space:nowrap;
       box-shadow:var(--shadow);
@@ -357,7 +406,6 @@
       line-height:1.35;
     }
 
-    /* Delivery / pickup block */
     .fulfill{
       background: var(--surface-2);
       border: 1px solid var(--border);
@@ -368,9 +416,7 @@
     .fulfill .row2{
       display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
     }
-    .radio{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-    }
+    .radio{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .radio label{
       display:inline-flex; align-items:center; gap:8px;
       padding: 8px 10px;
@@ -378,21 +424,12 @@
       border: 1px solid var(--border);
       background: var(--surface);
       cursor:pointer;
-      font-weight: 800;
+      font-weight: 900;
       user-select:none;
     }
     .radio input{ accent-color: var(--brand); }
-    .note{
-      color: var(--muted);
-      font-size: 12px;
-      margin-top: 6px;
-    }
-    .location{
-      margin-top:10px;
-      display:none;
-      gap:8px;
-      flex-direction:column;
-    }
+    .note{ color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .location{ margin-top:10px; display:none; gap:8px; flex-direction:column; }
     .location textarea{
       width:100%;
       min-height:70px;
@@ -425,6 +462,7 @@
   <header>
     <div class="wrap brandbar">
       <div class="title">
+        <span class="logoDot" aria-hidden="true"></span>
         <h1>Beavertail Mini-Mart Order</h1>
       </div>
 
@@ -448,10 +486,7 @@
   <div class="bottom">
     <div class="wrap">
       <div class="totals">
-        <div class="line">
-          <span>Subtotal</span>
-          <strong id="subtotalText">UGX 0</strong>
-        </div>
+        
         <div class="grand">
           <span><strong>Total</strong></span>
           <strong id="totalText">UGX 0</strong>
@@ -548,7 +583,7 @@
   <script>
     const WHATSAPP_NUMBER = "256772844881";
     const EMAIL_TO = "drxpatt@gmail.com";
-    const DELIVERY_THRESHOLD = 50000; // delivery only if subtotal > 50k
+    const DELIVERY_THRESHOLD = 50000;
 
     const products = [
       { id: "p1",  name: "Rice (5kg)",           price: 45000, unit: "bag",    image: "rice-5kg.jpg" },
@@ -569,7 +604,6 @@
 
     // Elements
     const grid = document.getElementById("productGrid");
-    const subtotalText = document.getElementById("subtotalText");
     const totalText = document.getElementById("totalText");
     const itemsBadge = document.getElementById("itemsBadge");
     const resetCartBtn = document.getElementById("resetCart");
@@ -601,7 +635,7 @@
     const locationBox = document.getElementById("locationBox");
     const deliveryLocation = document.getElementById("deliveryLocation");
 
-    // ===== Theme =====
+    // Theme
     function applyTheme(theme){
       document.documentElement.setAttribute("data-theme", theme);
       themeLabel.textContent = (theme === "dark") ? "🌙" : "☀️";
@@ -626,7 +660,7 @@
       }
     });
 
-    // ===== Helpers =====
+    // Helpers
     function formatUGX(n){ return new Intl.NumberFormat("en-UG").format(n); }
     function saveCart(){ localStorage.setItem("beavertail_cart", JSON.stringify(cart)); }
     function getQty(id){ return Number(cart[id] || 0); }
@@ -640,6 +674,10 @@
 
       const el = document.querySelector(`[data-qty="${id}"]`);
       if(el) el.textContent = getQty(id);
+
+      // selected state on card
+      const card = document.querySelector(`[data-card="${id}"]`);
+      if(card) card.classList.toggle("selected", getQty(id) > 0);
     }
 
     function computeTotals(){
@@ -656,7 +694,6 @@
 
     function renderTotals(){
       const { subtotal, total, totalItems } = computeTotals();
-      subtotalText.textContent = `UGX ${formatUGX(subtotal)}`;
       totalText.textContent = `UGX ${formatUGX(total)}`;
       itemsBadge.textContent = `${totalItems} item${totalItems===1?"":"s"}`;
 
@@ -665,12 +702,13 @@
       nextBtn.style.cursor = (totalItems === 0) ? "not-allowed" : "pointer";
     }
 
-    // ===== Cards =====
+    // Cards
     function productCard(p){
       const qty = getQty(p.id);
 
       const card = document.createElement("div");
-      card.className = "card";
+      card.className = "card" + (qty > 0 ? " selected" : "");
+      card.setAttribute("data-card", p.id);
 
       const imgbox = document.createElement("div");
       imgbox.className = "imgbox";
@@ -755,7 +793,7 @@
         .forEach(p => grid.appendChild(productCard(p)));
     }
 
-    // ===== Search modal =====
+    // Search modal
     function openSearch(){
       searchModal.style.display = "flex";
       searchInputModal.value = "";
@@ -764,7 +802,7 @@
     }
     function closeSearch(){ searchModal.style.display = "none"; }
 
-    // ===== Checkout: fulfillment + message =====
+    // Checkout: fulfillment + message
     function getFulfillmentDetails(subtotal){
       const eligibleDelivery = subtotal > DELIVERY_THRESHOLD;
 
@@ -795,7 +833,6 @@
       const isDelivery = deliveryOpt.checked && eligibleDelivery;
       locationBox.style.display = isDelivery ? "flex" : "none";
 
-      // refresh preview + links live
       refreshCheckoutMessage();
     }
 
@@ -838,8 +875,6 @@
       if(checkoutModal.style.display !== "flex") return;
 
       const { msg } = buildOrderMessage();
-
-      // Review page: bold segments marked with *...*
       orderPreview.innerHTML = msg.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
 
       waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
@@ -850,16 +885,15 @@
       const { totalItems } = computeTotals();
       if(totalItems === 0) return;
 
-      // reset fulfillment fields each time
       pickupOpt.checked = true;
       deliveryLocation.value = "";
 
       checkoutModal.style.display = "flex";
-      syncFulfillmentUI();  // sets eligibility + message + links
+      syncFulfillmentUI();
     }
     function closeCheckout(){ checkoutModal.style.display = "none"; }
 
-    // ===== Events =====
+    // Events
     openSearchBtn.addEventListener("click", openSearch);
     closeSearchBtn.addEventListener("click", closeSearch);
     doneSearchBtn.addEventListener("click", closeSearch);
@@ -871,7 +905,6 @@
       cart = {};
       saveCart();
 
-      // clear search too
       searchInputModal.value = "";
       closeSearch();
       renderProducts("");
@@ -883,7 +916,6 @@
     closeCheckoutBtn.addEventListener("click", closeCheckout);
     checkoutModal.addEventListener("click", (e) => { if(e.target === checkoutModal) closeCheckout(); });
 
-    // Fulfillment events
     pickupOpt.addEventListener("change", syncFulfillmentUI);
     deliveryOpt.addEventListener("change", syncFulfillmentUI);
     deliveryLocation.addEventListener("input", refreshCheckoutMessage);
