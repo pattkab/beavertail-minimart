@@ -5,6 +5,7 @@
   <!-- Disable zoom -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Beavertail Mini-Mart Order</title>
+
   <style>
     :root{
       --bg:#f6f7fb; --surface:#fff; --surface-2:#f0f2f8;
@@ -13,7 +14,6 @@
       --brand:#2563eb; --danger:#dc2626; --ok:#059669;
       --radius:16px;
 
-      /* Bar colors */
       --barTop: linear-gradient(90deg, rgba(37,99,235,.18), rgba(5,150,105,.14));
       --barBottom: linear-gradient(90deg, rgba(5,150,105,.14), rgba(37,99,235,.18));
       --barBorder: rgba(37,99,235,.22);
@@ -41,6 +41,7 @@
       touch-action:manipulation;
     }
 
+    /* Shorter fixed header */
     header{
       position:fixed; top:0; left:0; right:0; z-index:30;
       background:
@@ -50,19 +51,18 @@
       border-bottom: 1px solid var(--barBorder);
     }
 
-    .wrap{ max-width:1100px; margin:0 auto; padding:14px 16px; }
+    .wrap{ max-width:1100px; margin:0 auto; padding:10px 12px; } /* reduced */
 
     .brandbar{
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       flex-wrap:wrap;
     }
     .title{
-      display:flex; flex-direction:column; gap:4px;
-      min-width: 240px;
-      flex: 1 1 260px;
+      display:flex; flex-direction:column; gap:0;
+      min-width: 200px;
+      flex: 1 1 240px;
     }
-    h1{ margin:0; font-size:18px; letter-spacing:.2px; }
-    .subtitle{ margin:0; color:var(--muted); font-size:12px; }
+    h1{ margin:0; font-size:16px; letter-spacing:.2px; line-height:1.1; }
 
     .controls{
       display:flex;
@@ -77,7 +77,7 @@
     }
 
     .iconbtn{
-      width: 42px; height: 42px;
+      width: 40px; height: 40px;
       border-radius: 12px;
       border:1px solid var(--border);
       background:var(--surface);
@@ -128,7 +128,7 @@
 
     .toggle{
       display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
+      padding:9px 10px;
       border-radius:12px;
       background:var(--surface);
       border:1px solid var(--border);
@@ -138,7 +138,7 @@
       color:var(--text);
       user-select:none;
       flex:0 0 auto;
-      height:42px;
+      height:40px;
     }
     .toggle .dot{
       width:36px; height:22px;
@@ -156,15 +156,8 @@
     }
     html[data-theme="dark"] .toggle .knob{ left:16px; }
 
-    @media (max-width: 640px){
-      .wrap{ padding:12px 12px; }
-      h1{ font-size:16px; }
-      .iconbtn{ width: 40px; height: 40px; }
-      .toggle{ height:40px; padding:9px 10px; }
-      .btn{ padding:9px 10px; }
-    }
-
-    main{ padding: 86px 0 140px; }
+    /* push content below shorter header */
+    main{ padding: 64px 0 140px; }
 
     .grid{
       display:grid;
@@ -185,7 +178,6 @@
       flex-direction:column;
       min-height:270px;
       min-width:0;
-      position:relative;
     }
 
     .imgbox{
@@ -357,13 +349,64 @@
       border:1px solid var(--border);
       border-radius:14px;
       padding:10px 10px;
-      max-height:40vh;
+      max-height:35vh;
       overflow:auto;
       font-size:13px;
       color:var(--text);
       white-space:pre-wrap;
       line-height:1.35;
     }
+
+    /* Delivery / pickup block */
+    .fulfill{
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .fulfill .row2{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .radio{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .radio label{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor:pointer;
+      font-weight: 800;
+      user-select:none;
+    }
+    .radio input{ accent-color: var(--brand); }
+    .note{
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .location{
+      margin-top:10px;
+      display:none;
+      gap:8px;
+      flex-direction:column;
+    }
+    .location textarea{
+      width:100%;
+      min-height:70px;
+      resize:vertical;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      outline:none;
+    }
+
     .sheet-footer{
       display:flex; gap:10px; flex-wrap:wrap;
       justify-content:space-between; align-items:center;
@@ -371,7 +414,7 @@
     }
     .small{ color:var(--muted); font-size:12px; }
 
-    button:focus, a:focus, input:focus{
+    button:focus, a:focus, input:focus, textarea:focus{
       outline: 3px solid color-mix(in srgb, var(--brand) 35%, transparent);
       outline-offset: 2px;
     }
@@ -383,7 +426,6 @@
     <div class="wrap brandbar">
       <div class="title">
         <h1>Beavertail Mini-Mart Order</h1>
-        <p class="subtitle">Thank you for shopping with us</p>
       </div>
 
       <div class="controls">
@@ -424,7 +466,7 @@
     </div>
   </div>
 
-  <!-- Search modal (no ticking; filters products like before) -->
+  <!-- Search modal -->
   <div class="modal" id="searchModal">
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="searchTitle">
       <header>
@@ -459,13 +501,37 @@
         <div class="wrap" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div>
             <h2 id="checkoutTitle">Review your order</h2>
-            <p>Thank you for shopping with us.</p>
+            <p>Choose delivery or pickup, then send.</p>
           </div>
           <button class="btn btn-ghost" id="closeCheckout">Close</button>
         </div>
       </header>
 
       <div class="sheet-body">
+        <!-- Delivery / Pickup -->
+        <div class="fulfill">
+          <div class="row2">
+            <div class="radio" role="radiogroup" aria-label="Delivery or Pickup">
+              <label>
+                <input type="radio" name="fulfillment" id="pickupOpt" value="pickup" checked />
+                Pickup
+              </label>
+
+              <label id="deliveryLabel">
+                <input type="radio" name="fulfillment" id="deliveryOpt" value="delivery" />
+                Delivery (on shopping &gt; 50k)
+              </label>
+            </div>
+          </div>
+
+          <div class="note" id="deliveryNote"></div>
+
+          <div class="location" id="locationBox">
+            <div style="font-weight:900;">Delivery location</div>
+            <textarea id="deliveryLocation" placeholder="Type your location (e.g., Bukoto near ... / House number / Landmark)"></textarea>
+          </div>
+        </div>
+
         <div class="orderbox" id="orderPreview"></div>
 
         <div class="sheet-footer">
@@ -482,6 +548,7 @@
   <script>
     const WHATSAPP_NUMBER = "256772844881";
     const EMAIL_TO = "drxpatt@gmail.com";
+    const DELIVERY_THRESHOLD = 50000; // delivery only if subtotal > 50k
 
     const products = [
       { id: "p1",  name: "Rice (5kg)",           price: 45000, unit: "bag",    image: "rice-5kg.jpg" },
@@ -500,29 +567,41 @@
 
     let cart = JSON.parse(localStorage.getItem("beavertail_cart") || "{}");
 
+    // Elements
     const grid = document.getElementById("productGrid");
     const subtotalText = document.getElementById("subtotalText");
     const totalText = document.getElementById("totalText");
     const itemsBadge = document.getElementById("itemsBadge");
-
     const resetCartBtn = document.getElementById("resetCart");
     const nextBtn = document.getElementById("nextBtn");
 
+    // Theme
     const themeToggle = document.getElementById("themeToggle");
     const themeLabel = document.getElementById("themeLabel");
 
+    // Search modal
     const openSearchBtn = document.getElementById("openSearch");
     const searchModal = document.getElementById("searchModal");
     const closeSearchBtn = document.getElementById("closeSearch");
     const doneSearchBtn = document.getElementById("doneSearch");
     const searchInputModal = document.getElementById("searchInputModal");
 
+    // Checkout modal
     const checkoutModal = document.getElementById("checkoutModal");
     const closeCheckoutBtn = document.getElementById("closeCheckout");
     const orderPreview = document.getElementById("orderPreview");
     const waBtn = document.getElementById("waBtn");
     const emailBtn = document.getElementById("emailBtn");
 
+    // Fulfillment controls
+    const pickupOpt = document.getElementById("pickupOpt");
+    const deliveryOpt = document.getElementById("deliveryOpt");
+    const deliveryNote = document.getElementById("deliveryNote");
+    const deliveryLabel = document.getElementById("deliveryLabel");
+    const locationBox = document.getElementById("locationBox");
+    const deliveryLocation = document.getElementById("deliveryLocation");
+
+    // ===== Theme =====
     function applyTheme(theme){
       document.documentElement.setAttribute("data-theme", theme);
       themeLabel.textContent = (theme === "dark") ? "🌙" : "☀️";
@@ -547,6 +626,7 @@
       }
     });
 
+    // ===== Helpers =====
     function formatUGX(n){ return new Intl.NumberFormat("en-UG").format(n); }
     function saveCart(){ localStorage.setItem("beavertail_cart", JSON.stringify(cart)); }
     function getQty(id){ return Number(cart[id] || 0); }
@@ -585,6 +665,7 @@
       nextBtn.style.cursor = (totalItems === 0) ? "not-allowed" : "pointer";
     }
 
+    // ===== Cards =====
     function productCard(p){
       const qty = getQty(p.id);
 
@@ -597,7 +678,7 @@
       const img = document.createElement("img");
       img.alt = p.name;
       img.src = `images/${p.image}`;
-      img.onerror = () => { img.style.display = "none"; }; // leave empty area if missing
+      img.onerror = () => { img.style.display = "none"; }; // keep blank photo area
       imgbox.appendChild(img);
 
       const content = document.createElement("div");
@@ -674,6 +755,7 @@
         .forEach(p => grid.appendChild(productCard(p)));
     }
 
+    // ===== Search modal =====
     function openSearch(){
       searchModal.style.display = "flex";
       searchInputModal.value = "";
@@ -682,12 +764,47 @@
     }
     function closeSearch(){ searchModal.style.display = "none"; }
 
+    // ===== Checkout: fulfillment + message =====
+    function getFulfillmentDetails(subtotal){
+      const eligibleDelivery = subtotal > DELIVERY_THRESHOLD;
+
+      let mode = pickupOpt.checked ? "Pickup" : "Delivery";
+      if(mode === "Delivery" && !eligibleDelivery){
+        mode = "Pickup";
+      }
+
+      const location = (deliveryLocation.value || "").trim();
+      return { eligibleDelivery, mode, location };
+    }
+
+    function syncFulfillmentUI(){
+      const { subtotal } = computeTotals();
+      const eligibleDelivery = subtotal > DELIVERY_THRESHOLD;
+
+      deliveryOpt.disabled = !eligibleDelivery;
+      deliveryLabel.style.opacity = eligibleDelivery ? "1" : ".55";
+      deliveryLabel.style.cursor = eligibleDelivery ? "pointer" : "not-allowed";
+
+      if(!eligibleDelivery){
+        deliveryNote.textContent = `Delivery is available only when your shopping is above UGX ${formatUGX(DELIVERY_THRESHOLD)}.`;
+        pickupOpt.checked = true;
+      } else {
+        deliveryNote.textContent = `Delivery is available for orders above UGX ${formatUGX(DELIVERY_THRESHOLD)}.`;
+      }
+
+      const isDelivery = deliveryOpt.checked && eligibleDelivery;
+      locationBox.style.display = isDelivery ? "flex" : "none";
+
+      // refresh preview + links live
+      refreshCheckoutMessage();
+    }
+
     function buildOrderMessage(){
       const lines = [];
       lines.push("*Beavertail Mini-Mart Order*");
       lines.push("--------------------------------");
-      let subtotal = 0;
 
+      let subtotal = 0;
       for(const p of products){
         const q = getQty(p.id);
         if(q > 0){
@@ -701,53 +818,75 @@
       lines.push(`*Subtotal: UGX ${formatUGX(subtotal)}*`);
       lines.push(`*TOTAL: UGX ${formatUGX(subtotal)}*`);
       lines.push("--------------------------------");
-      lines.push("Delivery/Pickup: (reply with location & preferred time)");
-      return lines.join("\n");
+
+      const { eligibleDelivery, mode, location } = getFulfillmentDetails(subtotal);
+
+      if(mode === "Delivery" && eligibleDelivery){
+        lines.push(`Fulfillment: DELIVERY`);
+        lines.push(`Location: ${location ? location : "(not provided)"}`);
+      } else {
+        lines.push(`Fulfillment: PICKUP`);
+      }
+
+      lines.push("--------------------------------");
+      lines.push("Reply with preferred time / any notes.");
+
+      return { msg: lines.join("\n"), subtotal };
+    }
+
+    function refreshCheckoutMessage(){
+      if(checkoutModal.style.display !== "flex") return;
+
+      const { msg } = buildOrderMessage();
+
+      // Review page: bold segments marked with *...*
+      orderPreview.innerHTML = msg.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
+
+      waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      emailBtn.href = `mailto:${EMAIL_TO}?subject=${encodeURIComponent("Beavertail Mini-mart Order")}&body=${encodeURIComponent(msg)}`;
     }
 
     function openCheckout(){
       const { totalItems } = computeTotals();
       if(totalItems === 0) return;
 
-      const msg = buildOrderMessage();
-      orderPreview.innerHTML = msg.replace(/\*(.*?)\*/g, "<strong>$1</strong>");
-
-      waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-      emailBtn.href = `mailto:${EMAIL_TO}?subject=${encodeURIComponent("Beavertail Mini-mart Order")}&body=${encodeURIComponent(msg)}`;
+      // reset fulfillment fields each time
+      pickupOpt.checked = true;
+      deliveryLocation.value = "";
 
       checkoutModal.style.display = "flex";
+      syncFulfillmentUI();  // sets eligibility + message + links
     }
     function closeCheckout(){ checkoutModal.style.display = "none"; }
 
-    // Events
+    // ===== Events =====
     openSearchBtn.addEventListener("click", openSearch);
     closeSearchBtn.addEventListener("click", closeSearch);
     doneSearchBtn.addEventListener("click", closeSearch);
     searchModal.addEventListener("click", (e) => { if(e.target === searchModal) closeSearch(); });
 
-    searchInputModal.addEventListener("input", (e) => {
-      renderProducts(e.target.value);
-    });
+    searchInputModal.addEventListener("input", (e) => renderProducts(e.target.value));
 
     resetCartBtn.addEventListener("click", () => {
-  cart = {};
-  saveCart();
+      cart = {};
+      saveCart();
 
-  // Clear search
-  searchInputModal.value = "";
-  closeSearch();              // optional: closes search modal if open
+      // clear search too
+      searchInputModal.value = "";
+      closeSearch();
+      renderProducts("");
 
-  // Show all products again
-  renderProducts("");
-
-  // Reset totals
-  renderTotals();
-});
-
+      renderTotals();
+    });
 
     nextBtn.addEventListener("click", openCheckout);
     closeCheckoutBtn.addEventListener("click", closeCheckout);
     checkoutModal.addEventListener("click", (e) => { if(e.target === checkoutModal) closeCheckout(); });
+
+    // Fulfillment events
+    pickupOpt.addEventListener("change", syncFulfillmentUI);
+    deliveryOpt.addEventListener("change", syncFulfillmentUI);
+    deliveryLocation.addEventListener("input", refreshCheckoutMessage);
 
     // Init
     renderProducts("");
